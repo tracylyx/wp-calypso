@@ -1,3 +1,8 @@
+5.1.0 (next)
+------------
+
+* Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug
+
 5.0.0
 -----
 
