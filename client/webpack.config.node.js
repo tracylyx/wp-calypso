@@ -10,6 +10,7 @@
  */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+const fs = require( 'fs' );
 
 /**
  * Internal dependencies
@@ -56,6 +57,15 @@ function getExternals() {
 				fileLoader.test,
 
 				/[^/]?wp-calypso-client\//,
+
+				...fs
+					.readdirSync( path.join( __dirname, '../packages' ), { withFileTypes: true } )
+					.filter( ( file ) => file.isDirectory() )
+					.map( ( file ) =>
+						require( path.join( __dirname, '../packages', file.name, 'package.json' ) )
+					)
+					.filter( ( pkg ) => pkg.module )
+					.map( ( pkg ) => pkg.name ),
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
