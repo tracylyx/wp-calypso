@@ -10,7 +10,6 @@
  */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const fs = require( 'fs' );
 
 /**
  * Internal dependencies
@@ -22,6 +21,7 @@ const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const { packagesInMonorepo } = require( '../lib/monorepo' );
 
 /**
  * Internal variables
@@ -58,12 +58,8 @@ function getExternals() {
 
 				/[^/]?wp-calypso-client\//,
 
-				...fs
-					.readdirSync( path.join( __dirname, '../packages' ), { withFileTypes: true } )
-					.filter( ( file ) => file.isDirectory() )
-					.map( ( file ) =>
-						require( path.join( __dirname, '../packages', file.name, 'package.json' ) )
-					)
+				// Packages in the monorepo that have a `module` field
+				...packagesInMonorepo()
 					.filter( ( pkg ) => pkg.module )
 					.map( ( pkg ) => pkg.name ),
 			],
