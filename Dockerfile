@@ -65,8 +65,7 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
-COPY --from=builder --chown=nobody:nobody /calypso/ /calypso/
+COPY --from=builder /calypso/ /calypso/
 
-USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "build/server.js"]
