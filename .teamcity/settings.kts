@@ -44,6 +44,7 @@ project {
 
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
+	buildType(BuildDockerImage)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -78,7 +79,6 @@ object BuildBaseImages : BuildType({
 
 	vcs {
 		root(WpCalypso)
-
 		cleanCheckout = true
 	}
 
@@ -129,6 +129,46 @@ object BuildBaseImages : BuildType({
 	}
 })
 
+object BuildDockerImage : BuildType({
+	name = "Build docker image"
+	description = "Build docker image for Calypso"
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		param("env.DOCKER_BUILDKIT", "1")
+	}
+
+	steps {
+		dockerCommand {
+			name = "Build docker image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+				commandArgs = "--pull --build-arg use_cache=true"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+			}
+		}
+	}
+})
+
+
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
 	description = "Runs code hygiene and unit tests"
@@ -141,10 +181,6 @@ object RunAllUnitTests : BuildType({
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
-	}
-
-	params {
-		param("env.DOCKER_BUILDKIT", "1")
 	}
 
 	steps {
@@ -360,28 +396,6 @@ object RunAllUnitTests : BuildType({
 			dockerPull = true
 			dockerImage = "%docker_image%"
 			dockerRunParameters = "-u %env.UID%"
-		}
-		dockerCommand {
-			name = "Build docker image"
-			commandType = build {
-				source = file {
-					path = "Dockerfile"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/app:build-%build.number%
-					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
-				""".trimIndent()
-				commandArgs = "--pull --build-arg use_cache=true"
-			}
-			param("dockerImage.platform", "linux")
-		}
-		dockerCommand {
-			commandType = push {
-				namesAndTags = """
-					registry.a8c.com/calypso/app:build-%build.number%
-					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
-				""".trimIndent()
-			}
 		}
 	}
 
