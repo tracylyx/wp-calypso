@@ -1,4 +1,21 @@
-FROM node:12.18.4 as builder
+ARG use_cache=false
+ARG node_version=12.18.4
+
+###################
+FROM node:${node_version} as builder-cache-false
+
+
+###################
+# This image contains a directory /calypso/.cache which includes caches
+# for yarn, terser, css-loader and babel.
+FROM registry.a8c.com/calypso/base:latest as builder-cache-true
+
+ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+
+
+###################
+FROM builder-cache-${use_cache} as builder
 
 ARG commit_sha="(unknown)"
 ARG workers
@@ -38,8 +55,9 @@ RUN yarn install --frozen-lockfile
 # change any time any of the Calypso source-code changes.
 RUN yarn run build && rm -fr .cache
 
+
 ###################
-FROM node:12.18.4-alpine as app
+FROM node:${node_version}-alpine as app
 
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
