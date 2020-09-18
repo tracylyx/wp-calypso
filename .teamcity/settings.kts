@@ -140,8 +140,11 @@ object RunAllUnitTests : BuildType({
 
 	vcs {
 		root(WpCalypso)
-
 		cleanCheckout = true
+	}
+
+	params {
+		param("env.DOCKER_BUILDKIT", "1")
 	}
 
 	steps {
