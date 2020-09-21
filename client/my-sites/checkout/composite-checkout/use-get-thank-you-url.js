@@ -6,7 +6,6 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { isEmpty } from 'lodash';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
@@ -52,8 +51,6 @@ export function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -146,8 +143,6 @@ export function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge,
-		didPurchaseFail,
-		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -233,14 +228,8 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function maybeShowPlanBumpOffer( {
-	pendingOrReceiptId,
-	cart,
-	siteSlug,
-	didPurchaseFail,
-	isTransactionResultEmpty,
-} ) {
-	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
+function maybeShowPlanBumpOffer( { pendingOrReceiptId, cart, siteSlug } ) {
+	if ( hasPremiumPlan( cart ) ) {
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 	}
 
@@ -253,8 +242,6 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 } ) {
 	if ( hideNudge ) {
 		return;
@@ -278,8 +265,6 @@ function getRedirectUrlForConciergeNudge( {
 			pendingOrReceiptId,
 			cart,
 			siteSlug,
-			didPurchaseFail,
-			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
 			return upgradePath;
@@ -379,10 +364,8 @@ export function useGetThankYouUrl( {
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
 		const receiptId = transactionResult.receipt_id;
 		const orderId = transactionResult.order_id;
-		const isTransactionResultEmpty = isEmpty( transactionResult );
 
 		if ( siteSlug === 'no-user' || ! siteSlug ) {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -402,8 +385,6 @@ export function useGetThankYouUrl( {
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			hideNudge,
-			didPurchaseFail,
-			isTransactionResultEmpty,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
