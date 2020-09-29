@@ -8,14 +8,17 @@
 
 .email-management {
 	.gsuite-user-item__email {
-		float: left;
 		font-weight: 600;
 		line-height: 1.7;
 	}
-	
-	a.gsuite-user-item,
-	.gsuite-user-item__fix {
+
+	.gsuite-user-item__actions {
+		display: flex;
 		float: right;
 		font-size: $font-body-small;
+	}
+
+	a.gsuite-user-item,{
+		//font-size: $font-body-small;
 	}
 }

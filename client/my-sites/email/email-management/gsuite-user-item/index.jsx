@@ -20,40 +20,67 @@ import './style.scss';
 function GSuiteUserItem( props ) {
 	const translate = useTranslate();
 	const [ dialogVisible, setDialogVisible ] = useState( false );
+
 	const onFixClickHandler = ( e ) => {
 		e.preventDefault();
 		setDialogVisible( true );
 	};
+
 	const onCloseClickHandler = () => {
 		setDialogVisible( false );
 	};
 
+	const getMailboxLink = () => {
+		const { email } = props.user;
+
+		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://mail.google.com/`;
+	};
+
 	const getLoginLink = () => {
 		const { email, domain } = props.user;
+
 		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
 	};
 
-	const renderManage = () => {
+	const renderMailbox = () => {
 		return (
 			<ExternalLink
 				icon
-				className="gsuite-user-item"
+				href={ getMailboxLink() }
+				onClick={ props.onClick }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ translate( 'Mailbox', { context: 'Link pointing to Gmail' } ) }
+			</ExternalLink>
+		);
+	};
+
+	const renderManage = () => {
+		if ( ! props.user.is_admin ) {
+			return;
+		}
+
+		return (
+			<ExternalLink
+				icon
 				href={ getLoginLink() }
 				onClick={ props.onClick }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ translate( 'Manage', { context: 'Login to G Suite Manage' } ) }
+				{ translate( 'Manage', { context: 'Link pointing to Google Admin Console' } ) }
 			</ExternalLink>
 		);
 	};
 
-	const renderFix = () => {
+	const renderFinishSetup = () => {
 		return (
 			<Fragment>
-				<Button className="gsuite-user-item__fix" compact={ true } onClick={ onFixClickHandler }>
+				<Button compact={ true } onClick={ onFixClickHandler }>
 					{ translate( 'Finish Setup' ) }
 				</Button>
+
 				{ props.siteSlug && (
 					<PendingGSuiteTosNoticeDialog
 						domainName={ props.user.domain }
@@ -71,7 +98,12 @@ function GSuiteUserItem( props ) {
 	return (
 		<li>
 			<span className="gsuite-user-item__email">{ props.user.email }</span>
-			{ props.user.agreed_to_terms ? renderManage() : renderFix() }
+
+			<div className="gsuite-user-item__actions">
+				{ props.user.agreed_to_terms ? renderManage() : renderFinishSetup() }
+
+				{ renderMailbox() }
+			</div>
 		</li>
 	);
 }
