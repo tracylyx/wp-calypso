@@ -37,7 +37,6 @@ export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const sidebarCollapsed = useSelector( getSidebarIsCollapsed );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -58,19 +57,20 @@ export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 				}
 
 				if ( item?.children?.length ) {
-					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
+					return (
+						<MySitesSidebarUnifiedMenu
+							key={ item.slug }
+							path={ path }
+							link={ item.url }
+							selected={ isSelected }
+							{ ...item }
+						/>
+					);
 				}
 
 				return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
 			} ) }
-			<CollapseSidebar
-				key="collapse"
-				title="Collapse menu"
-				icon="dashicons-admin-collapse"
-				onClick={ () =>
-					sidebarCollapsed ? dispatch( expandSidebar() ) : dispatch( collapseSidebar() )
-				}
-			/>
+			<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
 		</Sidebar>
 	);
 };
