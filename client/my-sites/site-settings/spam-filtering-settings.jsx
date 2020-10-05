@@ -20,7 +20,8 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Gridicon from 'components/gridicon';
 import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { checkout } from 'my-sites/plans-v2/utils';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -28,8 +29,8 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
 } from 'lib/plans/constants';
+import { PRODUCT_JETPACK_ANTI_SPAM } from 'lib/products-values/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
@@ -41,6 +42,7 @@ const SpamFilteringSettings = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	onChangeField,
+	siteSlug,
 	translate,
 } ) => {
 	const { akismet: akismetActive, wordpress_api_key } = fields;
@@ -61,14 +63,14 @@ const SpamFilteringSettings = ( {
 	if ( ! inTransition && ! ( hasAkismetFeature || hasAntiSpam ) && ! isValidKey ) {
 		return (
 			<UpsellNudge
+				title={ translate( 'Automatically clear spam from comments and forms' ) }
 				description={ translate(
 					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
 				) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
-				plan={ PLAN_JETPACK_SECURITY_DAILY }
-				title={ translate( 'Automatically clear spam from comments and forms' ) }
 				showIcon={ true }
+				onClick={ () => checkout( siteSlug, PRODUCT_JETPACK_ANTI_SPAM ) }
 			/>
 		);
 	}
@@ -146,10 +148,12 @@ SpamFilteringSettings.propTypes = {
 	isRequestingSettings: PropTypes.bool,
 	isSavingSettings: PropTypes.bool,
 	settings: PropTypes.object,
+	siteSlug: PropTypes.string,
 };
 
 export default connect( ( state, { dirtyFields, fields } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasAkismetKeyError =
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
 		includes( dirtyFields, 'wordpress_api_key' );
@@ -162,5 +166,6 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 		hasAkismetFeature,
 		hasAkismetKeyError,
 		hasAntiSpam,
+		siteSlug: selectedSiteSlug,
 	};
 } )( localize( SpamFilteringSettings ) );
