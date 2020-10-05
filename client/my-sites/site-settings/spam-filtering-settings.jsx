@@ -20,7 +20,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Gridicon from 'components/gridicon';
 import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
-import { checkout } from 'my-sites/plans-v2/utils';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -70,7 +69,7 @@ const SpamFilteringSettings = ( {
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
 				showIcon={ true }
-				onClick={ () => checkout( siteSlug, PRODUCT_JETPACK_ANTI_SPAM ) }
+				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
 		);
 	}

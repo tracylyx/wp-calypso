@@ -502,7 +502,7 @@ export function getAllOptionsFromSlug( slug: string ): string[] | null {
 export function checkout(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {}
+	urlQueryArgs: QueryArgs
 ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
 
