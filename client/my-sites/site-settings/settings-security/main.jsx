@@ -19,7 +19,6 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
@@ -63,7 +62,6 @@ const SiteSettingsSecurity = ( {
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
-			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
