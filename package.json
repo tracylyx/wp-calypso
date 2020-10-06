@@ -63,6 +63,7 @@
 		"build-css:editor": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/editor.scss public/editor.css --output-style compressed && yarn run -s postcss public/editor.css",
 		"build-css:reader-mobile": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/reader-mobile.scss public/reader-mobile.css --output-style compressed && yarn run -s postcss public/reader-mobile.css",
 		"build-devdocs:search-index": "node bin/generate-devdocs-search-index.js",
+		"build-devdocs:diagrams": "node bin/generate-devdocs-diagrams.js",
 		"build-desktop": "run-s build-desktop:source build-desktop:install-app-deps build-desktop:app",
 		"build-desktop:source": "run-s build-desktop:config build-desktop:server build-desktop:client build-desktop:static",
 		"build-desktop:config": "node desktop/bin/build-desktop-config.js",
@@ -403,6 +404,7 @@
 	"devDependencies": {
 		"bunyan": "^1.8.14",
 		"chokidar": "^2.1.8",
-		"eslint-nibble": "^5.1.0"
+		"eslint-nibble": "^5.1.0",
+		"node-plantuml": "^0.9.0"
 	}
 }
