@@ -313,37 +313,34 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden || siteIsComingSoonV2 ) &&
-					hasSiteSeoFeature( selectedSite ) && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ ( function () {
-								if ( isSitePrivate ) {
-									if ( siteIsComingSoon ) {
-										return translate(
-											"SEO settings aren't recognized by search engines while your site is Coming Soon."
-										);
-									}
-
-									return translate(
-										"SEO settings aren't recognized by search engines while your site is Private."
-									);
-								} else if ( siteIsComingSoonV2 ) {
+				{ ( isSitePrivate || isSiteHidden ) && true /*hasSiteSeoFeature( selectedSite )*/ && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ ( function () {
+							if ( isSitePrivate ) {
+								if ( siteIsComingSoon ) {
 									return translate(
 										"SEO settings aren't recognized by search engines while your site is Coming Soon."
 									);
 								}
+
 								return translate(
-									"SEO settings aren't recognized by search engines while your site is Hidden."
+									"SEO settings aren't recognized by search engines while your site is Private."
 								);
-							} )() }
-						>
-							<NoticeAction href={ generalTabUrl }>
-								{ translate( 'Privacy Settings' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+							} else if ( siteIsComingSoonV2 ) {
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Coming Soon."
+								);
+							}
+							return translate(
+								"SEO settings aren't recognized by search engines while your site is Hidden."
+							);
+						} )() }
+					>
+						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
+					</Notice>
+				) }
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"

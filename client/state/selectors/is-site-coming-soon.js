@@ -45,10 +45,7 @@ export function isSiteComingSoonV2( state, siteId ) {
 
 	if ( settings ) {
 		// Site settings returns a numerical value for wpcom_public_coming_soon.
-		return (
-			parseInt( settings.wpcom_coming_soon, 10 ) === 1 ||
-			parseInt( settings.wpcom_public_coming_soon, 10 ) === 1
-		);
+		return parseInt( settings.wpcom_public_coming_soon, 10 ) === 1;
 	}
 
 	return false;
