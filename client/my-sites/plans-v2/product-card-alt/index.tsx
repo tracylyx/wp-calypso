@@ -4,6 +4,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -52,6 +53,8 @@ const ProductCardAltWrapper = ( {
 	highlight = false,
 	selectedTerm,
 }: ProductCardProps ) => {
+	const translate = useTranslate();
+
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -108,7 +111,7 @@ const ProductCardAltWrapper = ( {
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
-			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
+			badgeLabel={ productBadgeLabelAlt( item, isOwned, translate, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			children={ item.children }
