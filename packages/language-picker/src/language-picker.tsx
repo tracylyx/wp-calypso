@@ -3,6 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
+import { intersection } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -30,6 +31,32 @@ type Props = {
 	localizedLanguageNames?: LocalizedLanguageNames;
 };
 
+const findBestDefaultLanguageGroupId = (
+	selectedLanguage: Language | undefined,
+	languageGroups: LanguageGroup[],
+	defaultLananguageGroupId: string
+): string => {
+	if ( ! selectedLanguage ) {
+		return defaultLananguageGroupId;
+	}
+
+	if ( selectedLanguage.popular ) {
+		return 'popular';
+	}
+
+	return (
+		languageGroups.find( ( lg ) => {
+			const sharedTerritories = intersection( lg.subTerritories, selectedLanguage.territories );
+
+			if ( sharedTerritories.length > 0 ) {
+				return lg;
+			}
+
+			return false;
+		} )?.id ?? defaultLananguageGroupId
+	);
+};
+
 const LanguagePicker = ( {
 	onSelectLanguage,
 	languages,
@@ -40,7 +67,9 @@ const LanguagePicker = ( {
 	localizedLanguageNames,
 }: Props ) => {
 	const { __ } = useI18n();
-	const [ filter, setFilter ] = useState( defaultLananguageGroupId );
+	const [ filter, setFilter ] = useState(
+		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, defaultLananguageGroupId )
+	);
 
 	const getFilteredLanguages = () => {
 		switch ( filter ) {
