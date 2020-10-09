@@ -96,7 +96,10 @@ const LanguagePicker = ( {
 
 	return (
 		<>
-			<div className="language-picker__regions-label">{ __( 'regions' ) }</div>
+			<div className="language-picker__labels">
+				<div className="language-picker__regions-label">{ __( 'regions' ) }</div>
+				<div className="language-picker__languages-label">{ __( 'language' ) }</div>
+			</div>
 			<div className="language-picker__content">
 				<div className="language-picker__category-filters">{ renderCategoryButtons() }</div>
 				<div className="language-picker__language-buttons">

@@ -14,7 +14,10 @@
 	}
 }
 
-.language-picker__regions-label {
+.language-picker__labels {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
 	font-family: $default-font;
 	margin: 6px 12px;
 	color: $gray-600;
@@ -27,7 +30,8 @@
 	display: flex;
 }
 
-.language-picker__category-filters {
+.language-picker__category-filters,
+.language-picker__labels > div {
 	min-width: 170px;
 
 	@include break-small {
